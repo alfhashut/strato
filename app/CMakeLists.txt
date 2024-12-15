@@ -16,28 +16,6 @@ set(CMAKE_CXX_FLAGS_RELEASE "-Ofast -flto=full -fno-stack-protector -DNDEBUG")
 set(CMAKE_CXX_FLAGS_DEBUG "-Ofast")
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-Ofast")
 
-# libcxxabi
-set(ANDROID_STL "none")
-set(LIBCXXABI_INCLUDE_TESTS OFF)
-set(LIBCXXABI_ENABLE_SHARED OFF)
-set(LIBCXXABI_ENABLE_ASSERTIONS OFF)
-set(LIBCXXABI_LIBCXX_INCLUDES "${LIBCXX_TARGET_INCLUDE_DIRECTORY}" CACHE STRING "" FORCE)
-add_subdirectory("libraries/llvm/libcxxabi")
-
-# libcxx
-set(LIBCXX_INCLUDE_TESTS OFF)
-set(LIBCXX_INCLUDE_BENCHMARKS OFF)
-set(LIBCXX_INCLUDE_DOCS OFF)
-set(LIBCXX_ENABLE_SHARED OFF)
-set(LIBCXX_ENABLE_ASSERTIONS OFF)
-set(LIBCXX_ENABLE_STATIC_ABI_LIBRARY ON)
-add_subdirectory("libraries/llvm/libcxx")
-link_libraries(cxx_static)
-get_target_property(LIBCXX_INCLUDE_COMPILE_OPTION cxx-headers INTERFACE_INCLUDE_DIRECTORIES)
-string(REGEX REPLACE "-I" "" LIBCXX_INCLUDE_DIRECTORY_LIST "${LIBCXX_INCLUDE_COMPILE_OPTION}")
-list(GET LIBCXX_INCLUDE_DIRECTORY_LIST 1 LIBCXX_TARGET_INCLUDE_DIRECTORY) # We just want the target include directory
-set_target_properties(cxx-headers PROPERTIES INTERFACE_COMPILE_OPTIONS -isystem${LIBCXX_TARGET_INCLUDE_DIRECTORY})
-
 # Skyline's Boost fork
 set(Boost_USE_STATIC_LIBS ON)
 set(Boost_USE_MULTITHREADED ON)
@@ -163,6 +141,7 @@ add_library(skyline SHARED
         ${source_DIR}/skyline/common/spin_lock.cpp
         ${source_DIR}/skyline/common/uuid.cpp
         ${source_DIR}/skyline/common/trace.cpp
+        ${source_DIR}/skyline/common/trap_manager.cpp
         ${source_DIR}/skyline/logger/logger.cpp
         ${source_DIR}/skyline/nce/guest.S
         ${source_DIR}/skyline/nce.cpp
@@ -419,4 +398,4 @@ target_include_directories(skyline PRIVATE ${source_DIR}/skyline)
 target_compile_options(skyline PRIVATE -Wall -Wno-unknown-attributes -Wno-c++20-extensions -Wno-c++17-extensions -Wno-c99-designator -Wno-reorder -Wno-missing-braces -Wno-unused-variable -Wno-unused-private-field -Wno-dangling-else -Wconversion -fsigned-bitfields)
 
 target_link_libraries(skyline PRIVATE shader_recompiler audio_core)
-target_link_libraries_system(skyline android perfetto fmt lz4_static tzcode vkma mbedcrypto opus Boost::intrusive Boost::container Boost::preprocessor range-v3 adrenotools tsl::robin_map)
+target_link_libraries_system(skyline android perfetto fmt lz4_static tzcode vkma mbedcrypto opus Boost::intrusive Boost::container Boost::preprocessor Boost::regex range-v3 adrenotools tsl::robin_map)

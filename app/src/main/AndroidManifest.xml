@@ -12,21 +12,23 @@
         android:version="0x401000" />
 
     <application
-        android:name=".SkylineApplication"
+        android:name=".StratoApplication"
         android:enableOnBackInvokedCallback="true"
         android:allowBackup="true"
-        android:extractNativeLibs="true"
         android:fullBackupContent="@xml/backup_descriptor"
-        android:hasFragileUserData="${shouldSaveUserData}"
         android:icon="@drawable/logo_skyline"
         android:isGame="true"
-        android:label="${appLabel}"
+        android:appCategory="game"
+        android:label="@string/app_name"
         android:localeConfig="@xml/locales_config"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning,UnusedAttribute">
 
         <profileable android:shell="true" />
+
+        <meta-data android:name="android.game_mode_config"
+            android:resource="@xml/game_mode_config" />
 
         <activity
             android:name=".MainActivity"
